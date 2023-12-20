@@ -1,0 +1,24 @@
+#%RAML 1.0 DataType
+
+# This is code written by Brian
+
+type: object
+properties:
+  accountNumber : number
+  address : 
+    type: array
+    items:
+      properties:
+        typeOfAddress :
+          type: string
+          enum:
+            - "Home"
+            - "Work"
+            - "Secondary Home"
+        # ?: denotes field is optional
+        city ?: string
+        "country" : string
+        zip:
+          type: number
+          minimum: 00000
+          maximum: 99999

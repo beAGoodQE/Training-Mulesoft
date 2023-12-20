@@ -1,0 +1,72 @@
+#%RAML 1.0
+title: bank-sys-api
+
+resourceTypes:
+  healthCheck:
+    get:
+      description: This is to get <<resourcePathName | !uppercase>> resource
+      responses:
+        200:
+          body:
+            application/json:
+              example:
+                {
+                  time : "8:45 am",
+                  health : "ok"
+                }
+
+traits:
+  typeOfVerification:
+    queryParameters:
+      username : string
+      password : string
+      <<typeOfOtp>> : string
+
+/health:
+  type:
+    healthCheck
+
+/oneMoreHealth:
+  type:
+    healthCheck
+
+/getAccountSummary:
+  description: "To get bank account details of a customer."
+  get:
+    queryParameters:
+      accountNumber:
+        type: number
+    is:
+      - {typeOfVerification : {typeOfOtp : "mobileOtp"}}
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                "BankAccountNumber" : 12345,
+                "Name" : "Brian",
+                "Country" : "United States of America"
+              }
+
+/createAccount:
+  description: "To create a new account."
+  post:
+    queryParameters:
+      branch : string
+    is:
+      - {typeOfVerification : {typeOfOtp : "emailOtp"} }
+    body:
+      application/json:
+        type: !include createAccountRequest.raml
+        example: !include createRequestExample.raml
+        
+    responses:
+      201:
+          body:
+              application/json:
+                  example:
+                      {
+                        "message" : "Account created"
+                      }
+
